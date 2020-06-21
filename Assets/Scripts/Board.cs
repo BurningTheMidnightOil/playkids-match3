@@ -26,6 +26,7 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 GameObject tile = Instantiate(tilePrefab, new Vector3(i, j, 0), Quaternion.identity, transform);
+                tile.name = i + "," + j;
                 allTiles[i,j] = tile.GetComponent<Tile>();
             }
         }
