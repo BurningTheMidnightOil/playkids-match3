@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public int xIndex;
+    public int yIndex;
 
-    // Update is called once per frame
-    void Update()
+    public Food food;
+
+    public void Init(int x, int y, GameObject foodObject)
     {
-        
+        xIndex = x;
+        yIndex = y;
+
+        //Set Food
+        food = foodObject.GetComponent<Food>();
+        foodObject.transform.parent = transform;
+        foodObject.transform.localPosition = Vector3.zero;
     }
 }
