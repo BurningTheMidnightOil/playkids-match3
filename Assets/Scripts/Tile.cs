@@ -7,16 +7,25 @@ public class Tile : MonoBehaviour
     public int xIndex;
     public int yIndex;
 
-    public Food food;
+    public GameObject food;
+    public bool isPlacingFood = false;
 
-    public void Init(int x, int y, GameObject foodObject)
+    public void Init(int x, int y, GameObject food)
     {
         xIndex = x;
         yIndex = y;
+        StartCoroutine(PlaceFood(food));
+    }
 
-        //Set Food
-        food = foodObject.GetComponent<Food>();
-        foodObject.transform.parent = transform;
-        foodObject.transform.localPosition = Vector3.zero;
+    public GameObject GetFood()
+    {
+        return food;
+    }
+    public IEnumerator PlaceFood(GameObject foodObject)
+    {
+        isPlacingFood = true;
+        food = foodObject;
+        yield return foodObject.GetComponent<Food>().MoveTo(gameObject);
+        isPlacingFood = false;
     }
 }

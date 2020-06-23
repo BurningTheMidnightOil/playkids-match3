@@ -11,17 +11,19 @@ public class Board : MonoBehaviour
 
     [Header("Tiles")]
     public GameObject tilePrefab;
-    public Tile[,] allTiles;
+    public Tile[,] tiles;
 
     [Header("Food")]
     public GameObject foodPrefab;
+    public float swapMovementDuration = 1f;
     public Sprite[] foodSprites;
 
     void Start()
     {
-        allTiles = new Tile[width, height];
+        tiles = new Tile[width, height];
         SetupTiles();
         SetupCamera();
+        StartCoroutine(InputUpdate());
     }
 
     void SetupTiles()
@@ -32,9 +34,8 @@ public class Board : MonoBehaviour
             {
                 GameObject tile = Instantiate(tilePrefab, new Vector3(i, j, 0), Quaternion.identity, transform);
                 tile.name = i + "," + j;
-                allTiles[i,j] = tile.GetComponent<Tile>();
-                GameObject food = GenerateRandomFood();
-                allTiles[i, j].Init(i, j, food);
+                tiles[i,j] = tile.GetComponent<Tile>();
+                tiles[i,j].Init(i, j, GenerateRandomFood());
             }
         }
     }
@@ -53,7 +54,27 @@ public class Board : MonoBehaviour
     {
         GameObject food = Instantiate(foodPrefab, Vector3.zero, Quaternion.identity);
         int randomNumber = Random.Range(0, foodSprites.Length);
-        food.GetComponent<Food>().Init(foodSprites[randomNumber], randomNumber);
+        food.GetComponent<Food>().Init(foodSprites[randomNumber], randomNumber, swapMovementDuration);
         return food;
+    }
+
+    IEnumerator InputUpdate()
+    {
+        while (true)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                yield return SwapFood(tiles[1, 1], tiles[1, 2]);
+            }
+            yield return null;
+        }
+    }
+
+    IEnumerator SwapFood(Tile tileA, Tile tileB)
+    {
+        GameObject foodToSwap = tileA.GetFood();
+        StartCoroutine(tileA.PlaceFood(tileB.GetFood()));
+        StartCoroutine(tileB.PlaceFood(foodToSwap));
+        yield return new WaitUntil(() => !tileA.isPlacingFood && !tileB.isPlacingFood);
     }
 }
