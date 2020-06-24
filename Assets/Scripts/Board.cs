@@ -12,6 +12,9 @@ public class Board : MonoBehaviour
     [Header("Tiles")]
     public GameObject tilePrefab;
     public Tile[,] tiles;
+    Tile clickedTile;
+    Tile targetedTile;
+    bool isSwappingTiles = false;
 
     [Header("Food")]
     public GameObject foodPrefab;
@@ -23,7 +26,6 @@ public class Board : MonoBehaviour
         tiles = new Tile[width, height];
         SetupTiles();
         SetupCamera();
-        StartCoroutine(InputUpdate());
     }
 
     void SetupTiles()
@@ -36,6 +38,9 @@ public class Board : MonoBehaviour
                 tile.name = i + "," + j;
                 tiles[i,j] = tile.GetComponent<Tile>();
                 tiles[i,j].Init(i, j, GenerateRandomFood());
+                tiles[i, j].onMouseDown += TileClicked;
+                tiles[i, j].onMouseEnter += TileTargeted;
+                tiles[i, j].onMouseUp += SwapFoodBetweenTiles;
             }
         }
     }
@@ -58,23 +63,43 @@ public class Board : MonoBehaviour
         return food;
     }
 
-    IEnumerator InputUpdate()
+    void TileClicked(Tile tile)
     {
-        while (true)
+        clickedTile = tile;
+    }
+
+    void TileTargeted(Tile tile)
+    {
+        if (clickedTile != null && clickedTile != tile && isAdjacent(clickedTile, tile))
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                yield return SwapFood(tiles[1, 1], tiles[1, 2]);
-            }
-            yield return null;
+            targetedTile = tile;
+        } else
+        {
+            targetedTile = null;
         }
     }
 
+    void SwapFoodBetweenTiles(Tile tile)
+    {
+        if (clickedTile != null && targetedTile != null && !isSwappingTiles)
+        {
+            StartCoroutine(SwapFood(clickedTile, targetedTile));
+            clickedTile = null;
+            targetedTile = null;
+        }
+    }
     IEnumerator SwapFood(Tile tileA, Tile tileB)
     {
+        isSwappingTiles = true;
         GameObject foodToSwap = tileA.GetFood();
         StartCoroutine(tileA.PlaceFood(tileB.GetFood()));
         StartCoroutine(tileB.PlaceFood(foodToSwap));
         yield return new WaitUntil(() => !tileA.isPlacingFood && !tileB.isPlacingFood);
+        isSwappingTiles = false;
+    }
+
+    bool isAdjacent(Tile tileA, Tile tileB)
+    {
+        return Mathf.Abs(tileA.xIndex - tileB.xIndex) + Mathf.Abs(tileA.yIndex - tileB.yIndex) == 1;
     }
 }
