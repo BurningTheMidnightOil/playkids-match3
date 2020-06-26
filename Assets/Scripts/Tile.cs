@@ -15,11 +15,17 @@ public class Tile : MonoBehaviour
     public event MouseEventHandler onMouseEnter;
     public event MouseEventHandler onMouseUp;
 
-    public void Init(int x, int y, GameObject food, float setupPlaceFoodDuration)
+    public void Init(int x, int y, GameObject food)
     {
         xIndex = x;
         yIndex = y;
-        StartCoroutine(PlaceFood(food, setupPlaceFoodDuration));
+        SetFood(food);
+    }
+
+    public void SetFood(GameObject food)
+    {
+        food.transform.parent = transform;
+        this.food = food;
     }
 
     public GameObject GetFood()

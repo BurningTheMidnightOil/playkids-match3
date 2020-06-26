@@ -38,11 +38,20 @@ public class Board : MonoBehaviour
             {
                 GameObject tile = Instantiate(tilePrefab, new Vector3(i, j, 0), Quaternion.identity, transform);
                 tile.name = i + "," + j;
-                tiles[i,j] = tile.GetComponent<Tile>();
-                tiles[i,j].Init(i, j, GenerateRandomFood((float) i, (float) j), setupPlaceFoodDuration);
+                tiles[i, j] = tile.GetComponent<Tile>();
+                tiles[i, j].Init(i, j, GenerateRandomFood((float) i, (float) j));
                 tiles[i, j].onMouseDown += TileClicked;
                 tiles[i, j].onMouseEnter += TileTargeted;
                 tiles[i, j].onMouseUp += TileSwap;
+
+                var matchedTiles = FindMatchesAt(tiles[i, j]);
+
+                while(matchedTiles.Count > 0)
+                {
+                    tiles[i, j].RemoveFood();
+                    tiles[i, j].SetFood(GenerateRandomFood((float)i, (float)j));
+                    matchedTiles = FindMatchesAt(tiles[i, j]);
+                }
             }
         }
     }
@@ -190,11 +199,11 @@ public class Board : MonoBehaviour
         List<Tile> horizontalMatchList = new List<Tile>();
         horizontalMatchList.Add(tile);
 
-        for(int i = tile.xIndex - 1;  i >= 0 && tiles[i, tile.yIndex].GetTypeOfFood() == foodType; i--)
+        for(int i = tile.xIndex - 1;  i >= 0 && tiles[i, tile.yIndex] != null && tiles[i, tile.yIndex].GetTypeOfFood() == foodType; i--)
         {
             horizontalMatchList.Add(tiles[i, tile.yIndex]);
         }
-        for (int i = tile.xIndex + 1; i < width && tiles[i, tile.yIndex].GetTypeOfFood() == foodType; i++)
+        for (int i = tile.xIndex + 1; i < width && tiles[i, tile.yIndex] != null && tiles[i, tile.yIndex].GetTypeOfFood() == foodType; i++)
         {
             horizontalMatchList.Add(tiles[i, tile.yIndex]);
         }
@@ -202,11 +211,11 @@ public class Board : MonoBehaviour
         List<Tile> verticalMatchList = new List<Tile>();
         verticalMatchList.Add(tile);
 
-        for (int i = tile.yIndex - 1; i >= 0 && tiles[tile.xIndex, i].GetTypeOfFood() == foodType; i--)
+        for (int i = tile.yIndex - 1; i >= 0 && tiles[tile.xIndex, i] != null && tiles[tile.xIndex, i].GetTypeOfFood() == foodType; i--)
         {
             verticalMatchList.Add(tiles[tile.xIndex, i]);
         }
-        for (int i = tile.yIndex + 1; i < height && tiles[tile.xIndex, i].GetTypeOfFood() == foodType; i++)
+        for (int i = tile.yIndex + 1; i < height && tiles[tile.xIndex, i] != null && tiles[tile.xIndex, i].GetTypeOfFood() == foodType; i++)
         {
             verticalMatchList.Add(tiles[tile.xIndex, i]);
         }
