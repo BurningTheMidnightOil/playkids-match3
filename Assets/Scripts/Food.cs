@@ -5,16 +5,15 @@ using UnityEngine;
 public class Food : MonoBehaviour
 {
     public int foodNumber;
-    public float swapMovementDuration;
+    public delegate void MovingEvent(Food food);
 
-    public void Init(Sprite sprite, int foodNumber, float swapMovementDuration)
+    public void Init(Sprite sprite, int foodNumber)
     {
         GetComponent<SpriteRenderer>().sprite = sprite;
         this.foodNumber = foodNumber;
-        this.swapMovementDuration = swapMovementDuration;
     }
 
-    public IEnumerator MoveTo(GameObject tile)
+    public IEnumerator MoveTo(GameObject tile, float movementDuration)
     {
         transform.parent = tile.transform;
         Vector3 startPosition = transform.localPosition;
@@ -33,7 +32,7 @@ public class Food : MonoBehaviour
             }
 
             elapsedTime += Time.deltaTime;
-            t = Mathf.Clamp(elapsedTime / swapMovementDuration, 0f, 1f);
+            t = Mathf.Clamp(elapsedTime / movementDuration, 0f, 1f);
 
             transform.localPosition = Vector3.Lerp(startPosition, destination, t);
 

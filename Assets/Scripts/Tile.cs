@@ -15,22 +15,45 @@ public class Tile : MonoBehaviour
     public event MouseEventHandler onMouseEnter;
     public event MouseEventHandler onMouseUp;
 
-    public void Init(int x, int y, GameObject food)
+    public void Init(int x, int y, GameObject food, float setupPlaceFoodDuration)
     {
         xIndex = x;
         yIndex = y;
-        StartCoroutine(PlaceFood(food));
+        StartCoroutine(PlaceFood(food, setupPlaceFoodDuration));
     }
 
     public GameObject GetFood()
     {
         return food;
     }
-    public IEnumerator PlaceFood(GameObject foodObject)
+
+    public int GetTypeOfFood()
+    {
+        return food.GetComponent<Food>().foodNumber;
+    }
+
+    public void RemoveFood()
+    {
+        Destroy(food);
+    }
+
+    public void DettachFood(Food foodToDettach)
+    {
+        if(food == foodToDettach) food = null;
+    }
+    public IEnumerator PlaceFood(GameObject foodObject, float duration)
     {
         isPlacingFood = true;
-        food = foodObject;
-        yield return foodObject.GetComponent<Food>().MoveTo(gameObject);
+        if(foodObject != null)
+        {
+            food = foodObject;
+            yield return foodObject.GetComponent<Food>().MoveTo(gameObject, duration);
+        } 
+        else
+        {
+            food = null;
+        }
+        
         isPlacingFood = false;
     }
 
