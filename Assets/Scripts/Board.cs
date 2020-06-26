@@ -49,7 +49,7 @@ public class Board : MonoBehaviour
                 while(matchedTiles.Count > 0)
                 {
                     tiles[i, j].RemoveFood();
-                    tiles[i, j].SetFood(GenerateRandomFood((float)i, (float)j));
+                    tiles[i, j].SetFood(GenerateRandomFood((float) i, (float) j));
                     matchedTiles = FindMatchesAt(tiles[i, j]);
                 }
             }
@@ -62,10 +62,8 @@ public class Board : MonoBehaviour
         float aspectRatio = (float) Screen.width / (float) Screen.height;
         float verticalSize = (float)height / 2f + (float)lateralSize;
         float horizontalSize = ((float)width / 2f + (float)lateralSize) / aspectRatio;
-
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
     }
-
     GameObject GenerateRandomFood(float x, float y)
     {
         GameObject food = Instantiate(foodPrefab, new Vector3(x, y, 0), Quaternion.identity);
@@ -104,16 +102,25 @@ public class Board : MonoBehaviour
         isSwappingTiles = true;
 
         yield return SwapFood(tileA, tileB, swapMovementDuration);
-        FindMatchesAndRemoveFromBoardAtTiles(tileA, tileB);
-        yield return FillEmptyTiles();
-        bool foundMatches = false;
+        var matchedTiles = FindMatchesAtTiles(tileA, tileB);
 
-        do
+        if(matchedTiles.Count > 0)
         {
-            foundMatches = SearchForMatches();
+            RemoveFoodFromTiles(matchedTiles);
             yield return FillEmptyTiles();
+            bool foundMatches = false;
+
+            do
+            {
+                foundMatches = SearchForMatches();
+                yield return FillEmptyTiles();
+            }
+            while (foundMatches);
         }
-        while (foundMatches);
+        else
+        {
+            yield return SwapFood(tileB, tileA, swapMovementDuration);
+        }
 
         isSwappingTiles = false;
     }
@@ -126,10 +133,14 @@ public class Board : MonoBehaviour
         yield return new WaitUntil(() => !tileA.isPlacingFood && !tileB.isPlacingFood);
     }
 
-    void FindMatchesAndRemoveFromBoardAtTiles(Tile tileA, Tile tileB)
+    List<Tile> FindMatchesAtTiles(Tile tileA, Tile tileB)
     {
-        var combinedMatches = FindMatchesAt(tileA).Union(FindMatchesAt(tileB)).ToList();
-        foreach (Tile matchedTile in combinedMatches)
+        return FindMatchesAt(tileA).Union(FindMatchesAt(tileB)).ToList();
+    }
+
+    void RemoveFoodFromTiles(List<Tile> matchedTiles)
+    {
+        foreach (Tile matchedTile in matchedTiles)
         {
             matchedTile.RemoveFood();
         }
