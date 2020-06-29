@@ -23,6 +23,11 @@ public class Board : MonoBehaviour
     public float setupPlaceFoodDuration = 0.1f;
     public Sprite[] foodSprites;
 
+    public delegate void BoardEventHandler();
+    public event BoardEventHandler onSelect;
+    public event BoardEventHandler onSwap;
+    public event BoardEventHandler onClear;
+
     void Start()
     {
         tiles = new Tile[width, height];
@@ -76,6 +81,10 @@ public class Board : MonoBehaviour
     void TileClicked(Tile tile)
     {
         clickedTile = tile;
+        if(onSelect != null)
+        {
+            onSelect();
+        }
     }
 
     void TileTargeted(Tile tile)
@@ -101,6 +110,10 @@ public class Board : MonoBehaviour
     IEnumerator PlayerSwapFoodCommand(Tile tileA, Tile tileB)
     {
         isSwappingTiles = true;
+        if(onSwap != null)
+        {
+            onSwap();
+        }
 
         yield return SwapFood(tileA, tileB, swapMovementDuration);
         var matchedTiles = FindMatchesAtTiles(tileA, tileB);
@@ -146,6 +159,10 @@ public class Board : MonoBehaviour
 
     void RemoveFoodFromTiles(List<Tile> matchedTiles)
     {
+        if(onClear != null)
+        {
+            onClear();
+        }
         foreach (Tile matchedTile in matchedTiles)
         {
             matchedTile.RemoveFood();
