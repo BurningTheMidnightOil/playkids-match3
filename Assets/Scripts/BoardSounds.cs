@@ -18,12 +18,12 @@ public class BoardSounds : MonoBehaviour
         board.onClear += PlayClearFX;
     }
 
-    void PlaySelectFX()
+    void PlaySelectFX(Tile tile)
     {
         audioSource.PlayOneShot(select);
     }
 
-    void PlaySwapFX()
+    void PlaySwapFX(Tile tileA, Tile tileB)
     {
         audioSource.PlayOneShot(swap);
     }

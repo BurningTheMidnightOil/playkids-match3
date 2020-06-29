@@ -23,10 +23,14 @@ public class Board : MonoBehaviour
     public float setupPlaceFoodDuration = 0.1f;
     public Sprite[] foodSprites;
 
-    public delegate void BoardEventHandler();
-    public event BoardEventHandler onSelect;
-    public event BoardEventHandler onSwap;
-    public event BoardEventHandler onClear;
+    public delegate void BoardSelectEventHandler(Tile tile);
+    public event BoardSelectEventHandler onSelect;
+
+    public delegate void BoardSwapEventHandler(Tile tileA, Tile tileB);
+    public event BoardSwapEventHandler onSwap;
+
+    public delegate void BoardClearEventHandler();
+    public event BoardClearEventHandler onClear;
 
     void Start()
     {
@@ -83,7 +87,7 @@ public class Board : MonoBehaviour
         clickedTile = tile;
         if(onSelect != null)
         {
-            onSelect();
+            onSelect(tile);
         }
     }
 
@@ -112,7 +116,7 @@ public class Board : MonoBehaviour
         isSwappingTiles = true;
         if(onSwap != null)
         {
-            onSwap();
+            onSwap(tileA, tileB);
         }
 
         yield return SwapFood(tileA, tileB, swapMovementDuration);

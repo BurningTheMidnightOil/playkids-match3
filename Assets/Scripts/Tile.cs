@@ -65,6 +65,7 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
+        food.GetComponent<Food>().ChangeSpriteToSelected();
         if(onMouseDown != null)
         {
             onMouseDown(this);
@@ -81,6 +82,7 @@ public class Tile : MonoBehaviour
 
     private void OnMouseUp()
     {
+        food.GetComponent<Food>().ChangeSpriteToUnselected();
         if (onMouseUp != null)
         {
             onMouseUp(this);

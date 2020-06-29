@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foodNumber: 0
+  selectedColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
 --- !u!212 &-3259215549116743665
 SpriteRenderer:
   m_ObjectHideFlags: 0

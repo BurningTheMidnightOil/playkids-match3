@@ -6,11 +6,25 @@ public class Food : MonoBehaviour
 {
     public int foodNumber;
     public delegate void MovingEvent(Food food);
+    [SerializeField] Color selectedColor;
+
+    SpriteRenderer renderer;
 
     public void Init(Sprite sprite, int foodNumber)
     {
-        GetComponent<SpriteRenderer>().sprite = sprite;
+        renderer = GetComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
         this.foodNumber = foodNumber;
+    }
+
+    public void ChangeSpriteToSelected()
+    {
+        renderer.color = selectedColor;
+    }
+
+    public void ChangeSpriteToUnselected()
+    {
+        renderer.color = Color.white;
     }
 
     public IEnumerator MoveTo(GameObject tile, float movementDuration)
