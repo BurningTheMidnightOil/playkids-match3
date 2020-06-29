@@ -64,6 +64,7 @@ public class Board : MonoBehaviour
         float horizontalSize = ((float)width / 2f + (float)lateralSize) / aspectRatio;
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
     }
+
     GameObject GenerateRandomFood(float x, float y)
     {
         GameObject food = Instantiate(foodPrefab, new Vector3(x, y, 0), Quaternion.identity);
@@ -120,6 +121,11 @@ public class Board : MonoBehaviour
         else
         {
             yield return SwapFood(tileB, tileA, swapMovementDuration);
+        }
+
+        while(!CheckPossibleMoves())
+        {
+            yield return ShuffleFood();
         }
 
         isSwappingTiles = false;
@@ -299,5 +305,94 @@ public class Board : MonoBehaviour
         }
 
         return tilesToDestroy;
+    }
+
+    bool CheckPossibleMoves()
+    {
+        int foodType;
+        List<Tile> tilesWithSameFood = new List<Tile>();
+        List<Tile> possibleTiles = new List<Tile>();
+
+        for(int i = 0; i < width; i ++)
+        {
+            for(int j = 0; j < height; j++)
+            {
+                foodType = tiles[i, j].GetTypeOfFood();
+                tilesWithSameFood.Clear();
+                possibleTiles.Clear();
+
+                tilesWithSameFood = SearchForSurroundTilesWithEqualFoodIn(i, j, foodType);
+
+                foreach(Tile tile in tilesWithSameFood)
+                {
+                    if(tile.xIndex == i - 1 && i - 2 > 0)
+                    {
+                        possibleTiles = SearchForSurroundTilesWithEqualFoodIn(i - 2, j, foodType);
+                        possibleTiles.Remove(tiles[i - 1, j]);
+                        if(possibleTiles.Count > 0)
+                        {
+                            return true;
+                        }
+                    }
+                    if (tile.xIndex == i + 1 && i + 2 < width)
+                    {
+                        possibleTiles = SearchForSurroundTilesWithEqualFoodIn(i + 2, j, foodType);
+                        possibleTiles.Remove(tiles[i + 1, j]);
+                        if (possibleTiles.Count > 0)
+                        {
+                            return true;
+                        }
+                    }
+                    if (tile.yIndex == j - 1 && j - 2 > 0)
+                    {
+                        possibleTiles = SearchForSurroundTilesWithEqualFoodIn(i, j - 2, foodType);
+                        possibleTiles.Remove(tiles[i, j - 1]);
+                        if (possibleTiles.Count > 0)
+                        {
+                            return true;
+                        }
+                    }
+                    if (tile.yIndex == j + 1 && j + 2 < height)
+                    {
+                        possibleTiles = SearchForSurroundTilesWithEqualFoodIn(i, j + 2, foodType);
+                        possibleTiles.Remove(tiles[i, j + 1]);
+                        if (possibleTiles.Count > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    List<Tile> SearchForSurroundTilesWithEqualFoodIn(int i, int j, int foodType)
+    {
+        List<Tile> tilesList = new List<Tile>();
+
+        if (i - 1 >= 0 && tiles[i - 1, j].GetTypeOfFood() == foodType)
+        {
+            tilesList.Add(tiles[i - 1, j]);
+        }
+        if (i + 1 < width && tiles[i + 1, j].GetTypeOfFood() == foodType)
+        {
+            tilesList.Add(tiles[i + 1, j]);
+        }
+        if (j - 1 >= 0 && tiles[i, j - 1].GetTypeOfFood() == foodType)
+        {
+            tilesList.Add(tiles[i, j - 1]);
+        }
+        if (j + 1 < height && tiles[i, j + 1].GetTypeOfFood() == foodType)
+        {
+            tilesList.Add(tiles[i, j + 1]);
+        }
+
+        return tilesList;
+    }
+
+    IEnumerator ShuffleFood()
+    {
+        yield return SwapFood(tiles[Random.Range(0, width), Random.Range(0, height)], tiles[Random.Range(0, width), Random.Range(0, height)], swapMovementDuration);
     }
 }

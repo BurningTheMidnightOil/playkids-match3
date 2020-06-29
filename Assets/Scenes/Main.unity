@@ -507,6 +507,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5574343322764273989, guid: fbc6eb90d7e8bad46a9c505856242eb6,
         type: 3}
+      propertyPath: width
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5574343322764273989, guid: fbc6eb90d7e8bad46a9c505856242eb6,
+        type: 3}
+      propertyPath: height
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5574343322764273989, guid: fbc6eb90d7e8bad46a9c505856242eb6,
+        type: 3}
       propertyPath: swapMovementDuration
       value: 0.5
       objectReference: {fileID: 0}
