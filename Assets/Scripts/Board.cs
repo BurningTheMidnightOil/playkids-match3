@@ -29,7 +29,7 @@ public class Board : MonoBehaviour
     public delegate void BoardSwapEventHandler(Tile tileA, Tile tileB);
     public event BoardSwapEventHandler onSwap;
 
-    public delegate void BoardClearEventHandler();
+    public delegate void BoardClearEventHandler(int numberOfClearedTiles);
     public event BoardClearEventHandler onClear;
 
     void Start()
@@ -96,7 +96,8 @@ public class Board : MonoBehaviour
         if (clickedTile != null && clickedTile != tile && isAdjacent(clickedTile, tile))
         {
             targetedTile = tile;
-        } else
+        } 
+        else
         {
             targetedTile = null;
         }
@@ -165,7 +166,7 @@ public class Board : MonoBehaviour
     {
         if(onClear != null)
         {
-            onClear();
+            onClear(matchedTiles.Count);
         }
         foreach (Tile matchedTile in matchedTiles)
         {
@@ -218,10 +219,7 @@ public class Board : MonoBehaviour
 
         var combinedMatches = horizontalMatches.Union(verticalMatches).ToList();
 
-        foreach (Tile matchedTile in combinedMatches)
-        {
-            matchedTile.RemoveFood();
-        }
+        RemoveFoodFromTiles(combinedMatches);
         return combinedMatches.Count > 0;
     }
     

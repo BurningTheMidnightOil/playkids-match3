@@ -28,8 +28,8 @@ public class BoardSounds : MonoBehaviour
         audioSource.PlayOneShot(swap);
     }
 
-    void PlayClearFX()
+    void PlayClearFX(int number)
     {
-        audioSource.PlayOneShot(clear);
+        if(number > 0) audioSource.PlayOneShot(clear);
     }
 }
