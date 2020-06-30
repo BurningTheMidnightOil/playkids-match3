@@ -6,36 +6,38 @@ using UnityEngine.UI;
 public class TimerUI : MonoBehaviour
 {
     [SerializeField] Text timerText;
-    [SerializeField] int initialMinutes;
-    [SerializeField] int initialSeconds;
+    int seconds;
+    int minutes;
     
     void Start()
     {
+        seconds = GameManager.Instance.InitialSeconds;
+        minutes = GameManager.Instance.InitialMinutes;
         StartCoroutine(UpdateTimer());
     }
 
     IEnumerator UpdateTimer()
     {
-        while(!(initialSeconds == 0 && initialMinutes == 0))
+        while(!(seconds == 0 && minutes == 0))
         {
             yield return new WaitForSeconds(1f);
-            if(initialSeconds > 0)
+            if(seconds > 0)
             {
-                initialSeconds--;
+                seconds--;
             }
-            else if(initialMinutes > 0)
+            else if(minutes > 0)
             {
-                initialMinutes--;
-                initialSeconds = 59;
+                minutes--;
+                seconds = 59;
             }
 
-            if(initialSeconds > 10)
+            if(seconds > 10)
             {
-                timerText.text = initialMinutes + ":" + initialSeconds;
+                timerText.text = minutes + ":" + seconds;
             }
             else
             {
-                timerText.text = initialMinutes + ":0" + initialSeconds;
+                timerText.text = minutes + ":0" + seconds;
             }
         }
     }
