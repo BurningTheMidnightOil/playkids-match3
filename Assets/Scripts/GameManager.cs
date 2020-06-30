@@ -5,8 +5,10 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     int score = 0;
-
+    [SerializeField] int maxScore = 100;
     [SerializeField] Board board;
+    public int Score { get => score; set => score = value; }
+    public int MaxScore { get => maxScore; set => maxScore = value; }
 
     public delegate void UpdateScoreEventHandler(int score);
     public event UpdateScoreEventHandler onScoreUpdate;
@@ -18,10 +20,15 @@ public class GameManager : Singleton<GameManager>
 
     void AddScore(int number)
     {
-        score += number;
+        Score += number;
+        if(Score > MaxScore)
+        {
+            Score = MaxScore;
+        }
+
         if(onScoreUpdate != null)
         {
-            onScoreUpdate(score);
+            onScoreUpdate(Score);
         }
     }
 }

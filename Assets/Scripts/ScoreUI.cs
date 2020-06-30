@@ -7,7 +7,7 @@ public class ScoreUI : MonoBehaviour
 {
     [SerializeField] Text scoreText;
     int score = 0;
-    // Start is called before the first frame update
+    
     void Start()
     {
         scoreText.text = "" + score;
