@@ -7,6 +7,8 @@ public class GameManager : Singleton<GameManager>
 {
     [Header("General")]
     [SerializeField] Board board;
+    [SerializeField] GameObject nextRoundButton;
+    [SerializeField] GameObject canvasOverlay;
     int roundNumber = 1;
 
     [Header("Score")]
@@ -31,6 +33,7 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         board.onClear += AddScore;
+        GameObject.DontDestroyOnLoad(canvasOverlay);
     }
 
     void AddScore(int number)
@@ -39,7 +42,7 @@ public class GameManager : Singleton<GameManager>
         if(Score > MaxScore)
         {
             Score = MaxScore;
-            FinishRound();
+            ShowNextRoundButton();
         }
 
         if(onScoreUpdate != null)
@@ -48,10 +51,21 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    void FinishRound()
+    void ShowNextRoundButton()
+    {
+        nextRoundButton.SetActive(true);
+    }
+
+    public void NextRound()
+    {
+        StartCoroutine(NextRoundCoroutine());
+    }
+
+    IEnumerator NextRoundCoroutine()
     {
         MaxScore += MaxScorePerRound;
         RoundNumber++;
+        yield return CanvasOverlayUI.Instance.ResetNextButtonImage();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
