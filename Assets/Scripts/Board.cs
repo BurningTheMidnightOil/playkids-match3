@@ -34,6 +34,7 @@ public class Board : MonoBehaviour
 
     void Start()
     {
+        GameManager.Instance.Board = this;
         tiles = new Tile[width, height];
         SetupTiles();
         SetupCamera();

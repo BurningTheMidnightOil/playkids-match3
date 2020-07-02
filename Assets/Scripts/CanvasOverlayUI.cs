@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class CanvasOverlayUI : Singleton<CanvasOverlayUI>
 {
-    [SerializeField] GameObject button;
+    [SerializeField] GameObject nextButton;
+    [SerializeField] GameObject retryButton;
     [SerializeField] Image buttonImage;
     [SerializeField] Sprite buttonUpSprite;
 
@@ -13,6 +14,13 @@ public class CanvasOverlayUI : Singleton<CanvasOverlayUI>
     {
         yield return new WaitForSeconds(0.3f);
         buttonImage.sprite = buttonUpSprite;
-        button.SetActive(false);
+        nextButton.SetActive(false);
+    }
+
+    public IEnumerator ResetRetryButtonImage()
+    {
+        yield return new WaitForSeconds(0.3f);
+        buttonImage.sprite = buttonUpSprite;
+        retryButton.SetActive(false);
     }
 }

@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : Singleton<GameManager>
 {
     [Header("General")]
-    [SerializeField] Board board;
+    Board board;
     [SerializeField] GameObject nextRoundButton;
+    [SerializeField] GameObject retryRoundButton;
     [SerializeField] GameObject canvasOverlay;
     int roundNumber = 1;
 
@@ -26,26 +27,32 @@ public class GameManager : Singleton<GameManager>
     public int InitialSeconds { get => initialSeconds; set => initialSeconds = value; }
     public int MaxScorePerRound { get => maxScorePerRound; set => maxScorePerRound = value; }
     public int RoundNumber { get => roundNumber; set => roundNumber = value; }
+    public Board Board { get => board; 
+        set 
+        {
+            board = value;
+            board.onClear += AddScore;
+        } 
+    }
 
     public delegate void UpdateScoreEventHandler(int score);
     public event UpdateScoreEventHandler onScoreUpdate;
 
     private void Start()
     {
-        board.onClear += AddScore;
-        GameObject.DontDestroyOnLoad(canvasOverlay);
+        DontDestroyOnLoad(canvasOverlay);
     }
 
     void AddScore(int number)
     {
         Score += number;
-        if(Score > MaxScore)
+        if (Score > MaxScore)
         {
             Score = MaxScore;
             ShowNextRoundButton();
         }
 
-        if(onScoreUpdate != null)
+        if (onScoreUpdate != null)
         {
             onScoreUpdate(Score);
         }
@@ -53,7 +60,12 @@ public class GameManager : Singleton<GameManager>
 
     void ShowNextRoundButton()
     {
-        nextRoundButton.SetActive(true);
+        if (!retryRoundButton.activeSelf) nextRoundButton.SetActive(true);
+    }
+
+    public void ShowRetryRoundButton()
+    {
+        if(!nextRoundButton.activeSelf) retryRoundButton.SetActive(true);
     }
 
     public void NextRound()
@@ -66,6 +78,17 @@ public class GameManager : Singleton<GameManager>
         MaxScore += MaxScorePerRound;
         RoundNumber++;
         yield return CanvasOverlayUI.Instance.ResetNextButtonImage();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void RetryRound()
+    {
+        StartCoroutine(RetryRoundCoroutine());
+    }
+
+    IEnumerator RetryRoundCoroutine()
+    {
+        yield return CanvasOverlayUI.Instance.ResetRetryButtonImage();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

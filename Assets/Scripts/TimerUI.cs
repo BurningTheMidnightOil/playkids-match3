@@ -40,5 +40,6 @@ public class TimerUI : MonoBehaviour
                 timerText.text = minutes + ":0" + seconds;
             }
         }
+        GameManager.Instance.ShowRetryRoundButton();
     }
 }
